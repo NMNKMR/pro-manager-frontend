@@ -9,6 +9,8 @@ import PageWrap from "./components/page-wrapper/PageWrap.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Analytics from "./pages/Analytics.jsx";
 import Settings from "./pages/Settings.jsx";
+import Spinner from "./components/Spinner.jsx";
+import ViewTask from "./pages/ViewTask.jsx";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -44,49 +46,78 @@ function App() {
   }, []);
 
 
-  return (
-    !loading ? 
-    <UserProvider value={{user, login, logout, updateUser: (updatedUser={})=> setUser((prev)=> ({...prev, ...updatedUser}))}}>
+  return !loading ? (
+    <UserProvider
+      value={{
+        user,
+        login,
+        logout,
+        updateUser: (updatedUser = {}) =>
+          setUser((prev) => ({ ...prev, ...updatedUser })),
+      }}
+    >
       <Routes>
-          <Route path='/' element={<PageWrap/>} >
-            <Route path="/" element={<Navigate to={"/dashboard"} />} />
-            <Route path='/dashboard' element={
+        <Route path="/" element={<PageWrap />}>
+          <Route path="/" element={<Navigate to={"/dashboard"} replace={true} />} />
+          <Route
+            path="/dashboard"
+            element={
+              <AuthCheck authentication>
+                {" "}
                 <Dashboard />
-              // <AuthCheck authentication>
-              //   {" "}
-              // </AuthCheck>
-              } 
-            />
-            <Route path='/analytics' element={
+              </AuthCheck>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <AuthCheck authentication>
+                {" "}
                 <Analytics />
-              // <AuthCheck authentication>
-              //   {" "}
-              // </AuthCheck>
-              } 
-            />
-            <Route path='/settings' element={
+              </AuthCheck>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <AuthCheck authentication>
+                {" "}
                 <Settings />
-              // <AuthCheck authentication>
-              //   {" "}
-              // </AuthCheck>
-              } 
-            />
-          </Route>
-          <Route path='/register' element={
+              </AuthCheck>
+            }
+          />
+        </Route>
+        <Route
+          path="/register"
+          element={
             <AuthCheck authentication={false}>
               {" "}
               <Register />
-            </AuthCheck>} 
-          />
-          <Route path='/login' element={
+            </AuthCheck>
+          }
+        />
+        <Route
+          path="/login"
+          element={
             <AuthCheck authentication={false}>
               {" "}
               <Login />
-            </AuthCheck>} 
-          />
-      </Routes> 
-    </UserProvider> : <h1 className="center">Loading...</h1>
-  )
+            </AuthCheck>
+          }
+        />
+        <Route
+          path="/view/:taskId"
+          element={
+              <ViewTask />
+          }
+        />
+      </Routes>
+    </UserProvider>
+  ) : (
+    <div style={{width: "100vw", height: "100vh"}}>
+      <Spinner />
+    </div>
+  );
 }
 
 export default App

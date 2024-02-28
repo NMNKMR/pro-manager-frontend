@@ -1,8 +1,10 @@
 import styles from "../css/SideBar.module.scss";
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { FiDatabase, FiSettings } from "react-icons/fi";
 import { IoLogOutOutline } from "react-icons/io5"
+import LogoutPopup from "./LogoutPopup";
+import { useAuth } from "../../context/user.context";
 
 const navItems = [
     {
@@ -25,13 +27,23 @@ const navItems = [
     },
 ]
 
-function SideBar() {
+function SideBar({showPopupModal}) {
+
+  const navigate = useNavigate();
+  const {logout} = useAuth();
+
+  const handleLogout = ()=> {
+    localStorage.removeItem("accessToken");
+    logout();
+    navigate("/login", {replace: true});
+  }
+
   return (
     <section className={styles.sidebar}>
       <nav>
         <div className={styles.brand}>
           <h3>
-            <span>
+            <span onClick={()=> navigate("/dashboard")}>
               <img src="logo.svg" alt="logo" /> Pro Manage
             </span>
           </h3>
@@ -56,7 +68,7 @@ function SideBar() {
         </div>
         <div className={styles.logout}>
           <p>
-            <span>
+            <span onClick={()=> showPopupModal(LogoutPopup, {handleLogout})}>
               <IoLogOutOutline/> Log out
             </span>
           </p>

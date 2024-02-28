@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {useAuth} from '../context/user.context.js';
 import { useNavigate } from 'react-router-dom';
+import Spinner from './Spinner.jsx';
 
 function AuthCheck({children, authentication=true}) {
     const [loader, setLoader] = useState(true)
@@ -8,13 +9,13 @@ function AuthCheck({children, authentication=true}) {
     const {user: {isAuth: userStatus}} = useAuth();
 
     useEffect(()=> {
-      if(authentication && !userStatus) navigate('/login')
-      else if(!authentication && userStatus) navigate('/dashboard')
+      if(authentication && !userStatus) navigate('/login', {replace: true})
+      else if(!authentication && userStatus) navigate('/dashboard', {replace: true})
       setLoader(false);
     }, [])
 
   return (
-    loader ? <h1>Loading...</h1> : <>{children}</>
+    loader ? <div style={{width: "100vw", height: "100vh"}}><Spinner/></div> : <>{children}</>
   )
 }
 

@@ -1,4 +1,4 @@
-import styles from "./css/auth.module.scss";
+import styles from "./css/Auth.module.scss";
 import {CiMail} from "react-icons/ci";
 import PasswordInput from "../components/form-inputs/PasswordInput";
 import Button from "../components/form-inputs/Button";
@@ -56,41 +56,43 @@ function Login() {
 
   return (
     <AuthWrap>
-        <div className={styles.auth}>
+      <div className={styles.auth}>
         <main>
-            <h1>Login</h1>
-            <form onSubmit={handleLogin}>
+          <h1>Login</h1>
+          <form onSubmit={handleLogin}>
             <div>
-                <div className={styles.form_input}>
+              <div className={styles.form_input}>
                 <CiMail />
                 <input
-                    type="email"
-                    name="email"
-                    value={user.email}
-                    onChange={handleInputChange}
-                    placeholder="Email"
+                  type="email"
+                  name="email"
+                  value={user.email}
+                  onChange={handleInputChange}
+                  placeholder="Email"
                 />
-                </div>
+              </div>
             </div>
             <div>
-                <div className={styles.form_input}>
+              <div className={styles.form_input}>
                 <PasswordInput
-                    value={user.password}
-                    onChange={handleInputChange}
+                  value={user.password}
+                  onChange={handleInputChange}
                 />
-                </div>
+              </div>
             </div>
             <p>{error}</p>
             <div>
-                <Button type="submit" processing={processing}>Log in</Button>
+              <Button type="submit" processing={processing}>
+                Log in
+              </Button>
             </div>
-            </form>
-            <section>
+          </form>
+          <section>
             <p>Have no account yet?</p>
-            <Button onClick={()=> navigate("/register")}>Register</Button>
-            </section>
+            <Button onClick={() => navigate("/register")}>Register</Button>
+          </section>
         </main>
-        </div>
+      </div>
     </AuthWrap>
   );
 }

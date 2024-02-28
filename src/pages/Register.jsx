@@ -1,4 +1,4 @@
-import styles from "./css/auth.module.scss";
+import styles from "./css/Auth.module.scss";
 import {CiMail} from "react-icons/ci";
 import PasswordInput from "../components/form-inputs/PasswordInput";
 import Button from "../components/form-inputs/Button";

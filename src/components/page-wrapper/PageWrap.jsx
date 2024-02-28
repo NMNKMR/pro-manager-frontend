@@ -2,17 +2,20 @@ import SideBar from './SideBar';
 import { Outlet } from 'react-router-dom';
 import styles from '../css/PageWrap.module.scss';
 import {Toaster, toast} from 'react-hot-toast';
+import PopupModal from '../PopupModal';
+import React, { useState } from 'react';
 
 const notifyError = (msg) => {
   toast.error(`${msg}`, {
-    position: 'bottom-center',
+    position: 'top-right',
     style: {
       padding: "16px",
-      borderRadius: "0.3125rem",
-      backgroundColor: "#17A2B8",
-      color: "#FFF",
+      borderRadius: "12px",
+      backgroundColor: "#FFF5F2",
+      borderColor: "#CF3636",
+      color: "#27303A",
       fontFamily: "Poppins, sans-serif",
-      fontWeight: "800",
+      fontWeight: "600",
       fontSize: "1.2rem"
     }
   })
@@ -20,28 +23,45 @@ const notifyError = (msg) => {
 
 const notifySuccess = (msg) => {
   toast.success(`${msg}`, {
-    position: 'bottom-center',
+    position: 'top-right',
     duration: 3000,
     style: {
       padding: "16px",
-      borderRadius: "0.3125rem",
-      backgroundColor: "#17A2B8",
-      color: "#FFF",
+      borderRadius: "12px",
+      backgroundColor: "#F6FFF9",
+      borderColor: "#48C1B5",
+      color: "#27303A",
       fontFamily: "Poppins, sans-serif",
-      fontWeight: "800",
+      fontWeight: "600",
       fontSize: "1.2rem"
     }
   })
 };
 
 function PageWrap() {
+  const [Popup, setShowPopup] = useState(null);
+
+  const showPopupModal = (Component, ...props)=> {
+    const removePopupModal = ()=> {setShowPopup(null)}
+
+    const Popup = ()=> (
+      <PopupModal>
+        <Component removePopupModal={removePopupModal} notifyError={notifyError} notifySuccess={notifySuccess} {...props[0]} />
+      </PopupModal>
+    )
+
+    setShowPopup(Popup);
+  }
+
+  
   return (
     <main className={styles.main}>
-      <SideBar />
+      <SideBar showPopupModal={showPopupModal} />
       <section className={styles.main_page}>
-        <Outlet context={{notifyError, notifySuccess}} />
+        <Outlet context={{ notifyError, notifySuccess, showPopupModal }} />
       </section>
-      <Toaster/>
+      <Toaster />
+      {Popup && React.cloneElement(Popup)}
     </main>
   );
 }
