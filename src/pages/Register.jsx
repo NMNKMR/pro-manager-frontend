@@ -19,35 +19,52 @@ function Register() {
         password: ""
     });
 
-    const [error, setError] = useState("");
+    const [error, setError] = useState({
+        name: "",
+        email: "",
+        confirmPassword: "",
+        password: "",
+        register: ""
+    });
     const [processing, setProcessing] = useState(false);
 
     const handleInputChange = (e)=> {
         const {name, value} = e.target;
         setUser((prev)=> ({...prev, [name]: value}))
+
+        error[name] && setError((prev)=> ({...prev, [name]: ""}));
+        error["register"] && setError((prev)=> ({...prev, register: ""}));
+    }
+
+    const handleErrors = ()=> {
+        const registerError = {};
+        
+        for(const field in user) {
+            if(user[field].trim()==="") registerError[field] = `This field is required`;
+            else if(field==="email" && !(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(user.email))) registerError.email="Invalid email address"
+            else if(field==="password" && user.password.length < 8) registerError.password="Password of minimum 8 characters required";
+        }
+
+        if(user.password !== user.confirmPassword) registerError.confirmPassword="Password does not match"
+  
+        return Object.keys(registerError).length ? registerError : null;
     }
 
     const handleRegister = async (e)=> {
         e.preventDefault();
-        setError("");
         setProcessing(true);
 
-        let registerError = "";
-
-        if([...Object.keys(user)].some((input)=> user[input].trim()==="")) registerError="All fields are required"
-        else if(!(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(user.email))) registerError="Invalid email address"
-        else if(user.password.length < 8) registerError="Password of minimum 8 characters required"
-        else if(user.password !== user.confirmPassword) registerError="Password does not match"
+        const registerError = handleErrors();
 
         if(registerError) {
-            setError(registerError);
+            setError((prev)=> ({...prev, ...registerError}));
             setProcessing(false);
             return;
         }
 
         const {data: newUser, error} = await registerUser({...user});
         if(error) {
-            setError(error);
+            setError((prev)=> ({...prev, register: error}));
             setProcessing(false);
             return;
         }
@@ -65,44 +82,56 @@ function Register() {
             <h1>Register</h1>
             <form onSubmit={handleRegister}>
             <div>
-                <div className={styles.form_input}>
-                <IoPersonOutline />
-                <input
-                    type="text"
-                    name="name"
-                    value={user.name}
-                    onChange={handleInputChange}
-                    placeholder="Name"
-                />
+                <div>
+                    <div className={`${styles.form_input} ${error.name ? styles.red_border : ""}`}>
+                    <IoPersonOutline />
+                    <input
+                        type="text"
+                        name="name"
+                        value={user.name}
+                        onChange={handleInputChange}
+                        placeholder="Name"
+                    />
+                    </div>
+                    <p className={styles.error}>{error.name}</p>
                 </div>
-                <div className={styles.form_input}>
-                <CiMail />
-                <input
-                    type="email"
-                    name="email"
-                    value={user.email}
-                    onChange={handleInputChange}
-                    placeholder="Email"
-                />
+                <div>
+                    <div className={`${styles.form_input} ${error.email ? styles.red_border : ""}`}>
+                    <CiMail />
+                    <input
+                        type="email"
+                        name="email"
+                        value={user.email}
+                        onChange={handleInputChange}
+                        placeholder="Email"
+                    />
+                    </div>
+                    <p className={styles.error}>{error.email}</p>
                 </div>
             </div>
             <div>
-                <div className={styles.form_input}>
-                <PasswordInput
-                    value={user.password}
-                    onChange={handleInputChange}
-                />
+                <div>
+                    <div className={`${styles.form_input} ${error.password ? styles.red_border : ""}`}>
+                    <PasswordInput
+                        value={user.password}
+                        onChange={handleInputChange}
+                    />
+                    </div>
+                    <p className={styles.error}>{error.password}</p>
                 </div>
-                <div className={styles.form_input}>
-                <PasswordInput
-                    value={user.confirmPassword}
-                    name="confirmPassword"
-                    placeholder="Confirm Password"
-                    onChange={handleInputChange}
-                />
+                <div>
+                    <div className={`${styles.form_input} ${error.confirmPassword ? styles.red_border : ""}`}>
+                    <PasswordInput
+                        value={user.confirmPassword}
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
+                        onChange={handleInputChange}
+                    />
+                    </div>
+                    <p className={styles.error}>{error.confirmPassword}</p>
                 </div>
             </div>
-            <p>{error}</p>
+            <p>{error.register}</p>
             <div>
                 <Button type="submit" processing={processing}>Register</Button>
             </div>

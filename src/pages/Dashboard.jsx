@@ -21,78 +21,13 @@ const durationOptions = [
   {title: "This Month", value: "Month"},
 ]
 
-const tempTasks = {
-  "backlog": [{
-    _id: "taskback1",
-    title: "Hero section",
-    priority: "low",
-    dueDate: "2024-02-24",
-    state: "backlog",
-    checklists: [
-      {
-        isChecked: true,
-        description: "Task to be done"
-      },
-      {
-        isChecked: true,
-        description: "Task to be done lorem ipsum is a Dummy text to test"
-      },
-    ]
-  }],
-  "to-do": [{
-    _id: "tasktodo1",
-    title: "Hero section",
-    priority: "high",
-    dueDate: "2024-02-25",
-    state: "to-do",
-    checklists: [
-      {
-        isChecked: false,
-        description: "Task to be done"
-      },
-      {
-        isChecked: false,
-        description: "Task to be done lorem ipsum is a Dummy text to test"
-      },
-    ]
-  }],
-  "progress": [{
-    _id: "taskprogress1",
-    title: "Hero section",
-    priority: "moderate",
-    dueDate: "2024-02-26",
-    state: "progress",
-    checklists: [
-      {
-        isChecked: true,
-        description: "Task to be done"
-      },
-      {
-        isChecked: false,
-        description: "Task to be done lorem ipsum is a Dummy text to test"
-      },
-    ]
-  }],
-  "done": [{
-    _id: "taskdone1",
-    title: "Hero section",
-    priority: "low",
-    dueDate: "2024-02-26",
-    state: "done",
-    checklists: [
-      {
-        isChecked: true,
-        description: "Task to be done"
-      },
-    ]
-  }],
-}
-
 function Dashboard() {
   const {user: {name: username}} = useAuth();
   const [duration, setDuration] = useState("Week");
   const [loading, setLoading] = useState(true);
-  const [tasksData, setTasksData] = useState(tempTasks);
+  const [tasksData, setTasksData] = useState({
+    "backlog": [], "to-do": [], "progress": [], "done": []
+  });
   const [showDurationSelect, setShowDurationSelect] = useState(false);
   const {notifyError, showPopupModal} = useOutletContext();
 

@@ -16,34 +16,47 @@ function Login() {
         password: ""
     });
 
-    const [error, setError] = useState("");
+    const [error, setError] = useState({
+      email: "",
+      password: "",
+      login: ""
+    });
     const [processing, setProcessing] = useState(false);
 
     const handleInputChange = (e)=> {
         const {name, value} = e.target;
         setUser((prev)=> ({...prev, [name]: value}))
+
+        error[name] && setError((prev)=> ({...prev, [name]: ""}));
+        error["login"] && setError((prev)=> ({...prev, login: ""}));
+    }
+
+    const handleErrors = ()=> {
+      const loginError = {};
+
+      if(user.email.trim() === "") loginError.email="This field is required";
+      if(user.password.trim() === "") loginError.password="This field is required";
+      else if(!(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(user.email))) loginError.email="Invalid email address";
+      else if(user.password.length < 8) loginError.password="Password of minimum 8 characters required";
+
+      return Object.keys(loginError).length ? loginError : null;
     }
 
     const handleLogin = async (e)=> {
         e.preventDefault();
-        setError("");
         setProcessing(true);
 
-        let loginError = "";
-
-        if(user.email.trim() === "" || user.password.trim() === "") loginError="All fields are required";
-        else if(!(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(user.email))) loginError="Invalid email address";
-        else if(user.password.length < 8) loginError="Password of minimum 8 characters required"
+        const loginError = handleErrors();
 
         if(loginError) {
-            setError(loginError);
+            setError((prev)=> ({...prev, ...loginError}));
             setProcessing(false);
             return;
         }
 
         const {data: userData, error} = await loginUser({...user});
         if(error) {
-            setError(error);
+            setError((prev)=> ({...prev, login: error}));
             setProcessing(false);
             return;
         }
@@ -61,7 +74,7 @@ function Login() {
           <h1>Login</h1>
           <form onSubmit={handleLogin}>
             <div>
-              <div className={styles.form_input}>
+              <div className={`${styles.form_input} ${error.email ? styles.red_border : ""}`}>
                 <CiMail />
                 <input
                   type="email"
@@ -71,16 +84,18 @@ function Login() {
                   placeholder="Email"
                 />
               </div>
+              <p className={styles.error}>{error.email}</p>
             </div>
             <div>
-              <div className={styles.form_input}>
+              <div className={`${styles.form_input} ${error.password ? styles.red_border : ""}`}>
                 <PasswordInput
                   value={user.password}
                   onChange={handleInputChange}
                 />
               </div>
+              <p className={styles.error}>{error.password}</p>
             </div>
-            <p>{error}</p>
+            <p>{error.login}</p>
             <div>
               <Button type="submit" processing={processing}>
                 Log in
