@@ -90,12 +90,16 @@ function ViewTask() {
               ))}
             </div>
           </section>
-          <div className={styles.footer}>
-            <div className={styles.due_date}>
-              <p>Due Date</p>
-              <div>{format(task.dueDate, "MMM do")}</div>
+          {
+            task.dueDate && (
+            <div className={styles.footer}>
+              <div className={styles.due_date}>
+                <p>Due Date</p>
+                <div>{format(task.dueDate, "MMM do")}</div>
+              </div>
             </div>
-          </div>
+            )
+          }
         </div>
       </main>
     </div>
